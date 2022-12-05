@@ -21,7 +21,11 @@ export async function getBooking(req: AuthenticatedRequest, res: Response) {
 
 export async function postBooking(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  const roomId = Number(req.body.roomId);
+  const roomId = req.body.roomId;
+
+  if (!roomId || roomId <= 0 ||  isNaN(roomId)) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
+  }
 
   try {
     const bookingId = await bookingService.postBooking(userId, roomId);
@@ -40,6 +44,14 @@ export async function updateBooking(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
   const roomId = Number(req.body.roomId);
   const bookingId = Number(req.params.bookingId);
+
+  if (!roomId || roomId <= 0 || isNaN(roomId)) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
+  }
+
+  if (!bookingId || bookingId <= 0 || isNaN(bookingId)) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
+  }
 
   try {
     const updatedBooking = await bookingService.updateBooking(userId, roomId, bookingId);
